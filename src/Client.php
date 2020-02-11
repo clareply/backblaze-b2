@@ -637,6 +637,35 @@ class Client
         );
     }
 
+
+    /**
+     * Get an Authorization token for downloading files.
+     *
+     * @param array $options
+     *
+     * @return mixed
+     */
+    public function getDownloadAuthorization(array $options)
+    {
+        if (!isset($options['BucketId']) && isset($options['BucketName'])) {
+            $options['BucketId'] = $this->getBucketIdFromName($options['BucketName']);
+        }
+
+        if (!isset($options['FileNamePrefix'])) {
+            $options['FileNamePrefix'] = '';
+        }
+
+        if (!isset($options['ValidDurationInSeconds'])) {
+            $options['ValidDurationInSeconds'] = 60 * 60 * 24; // 24 hours
+        }
+
+        return $this->sendAuthorizedRequest('POST', 'b2_get_download_authorization', [
+            'bucketId'   => $options['BucketId'],
+            'fileNamePrefix'   => $options['FileNamePrefix'],
+            'validDurationInSeconds'   => $options['ValidDurationInSeconds'],
+        ]);
+    }
+
     /**
      * Sends a authorized request to b2 API.
      *

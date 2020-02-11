@@ -529,6 +529,24 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         ]);
     }
 
+    public function testGetDownloadAuthorization()
+    {
+        $guzzle = $this->buildGuzzleFromResponses([
+            $this->buildResponseFromStub(200, [], 'authorize_account.json'),
+            $this->buildResponseFromStub(200, [], 'get_download_authorization.json'),
+        ]);
+
+        $client = new Client('testId', 'testKey', ['client' => $guzzle]);
+
+        $authorizationResponse = $client->getDownloadAuthorization([
+            'BucketId' => 'bucketId',
+            'FileNamePrefix' => '1/',
+            'ValidDurationInSeconds' => 600,
+        ]);
+
+        $this->assertTrue(is_array($authorizationResponse));
+    }
+
     public function testAuthenticationTimeout()
     {
         $reflectionClass = new ReflectionClass('BackblazeB2\Client');
