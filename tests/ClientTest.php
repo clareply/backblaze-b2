@@ -547,6 +547,22 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(is_array($authorizationResponse));
     }
 
+    public function testGetDownloadUrl()
+    {
+        $guzzle = $this->buildGuzzleFromResponses([
+            $this->buildResponseFromStub(200, [], 'authorize_account.json'),
+        ]);
+
+        $client = new Client('testId', 'testKey', ['client' => $guzzle]);
+
+        $downloadUrl = $client->getDownloadUrl([
+            'BucketName' => 'test-bucket',
+            'FileName'   => 'path/to/file.txt',
+        ]);
+
+        $this->assertEquals('https://f900.backblaze.com/file/test-bucket/path/to/file.txt', $downloadUrl);
+    }
+
     public function testAuthenticationTimeout()
     {
         $reflectionClass = new ReflectionClass('BackblazeB2\Client');

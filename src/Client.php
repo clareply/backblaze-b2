@@ -667,6 +667,23 @@ class Client
     }
 
     /**
+     * Get a download url to a file in a bucket.
+     *
+     * @param array $options
+     * @return string|null
+     */
+    public function getDownloadUrl(array $options)
+    {
+        if (!isset($options['BucketName']) && isset($options['BucketId'])) {
+            $options['BucketName'] = $this->getBucketNameFromId($options['BucketId']);
+        }
+
+        $this->authorizeAccount();
+
+        return sprintf('%s/file/%s/%s', $this->downloadUrl, $options['BucketName'], $options['FileName']);
+    }
+
+    /**
      * Sends a authorized request to b2 API.
      *
      * @param string $method
@@ -686,4 +703,5 @@ class Client
             'json' => $json,
         ]);
     }
+
 }
